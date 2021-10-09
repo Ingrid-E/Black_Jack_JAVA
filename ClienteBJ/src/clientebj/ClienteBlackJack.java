@@ -148,8 +148,10 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 				datosRecibidos = new DatosBlackJack();
 				datosRecibidos = (DatosBlackJack) in.readObject();
 				if(datosRecibidos.getIdJugadores()[0].equals(idYo)) {
-					otroJugador=datosRecibidos.getIdJugadores()[1];
+					otroJugador=datosRecibidos.getIdJugadores()[2];
 					turno=true;
+				}else if(datosRecibidos.getIdJugadores()[1].equals(idYo)){
+					otroJugador=datosRecibidos.getIdJugadores()[1];
 				}else {
 					otroJugador=datosRecibidos.getIdJugadores()[0];
 				}
