@@ -1,2 +1,8 @@
-# Black_Jack_JAVA
-Juego Black Jack en Java donde se utilizan los conceptos Clientes-Servidor vistos en la clase de programación interactiva
+# 🃏 Black Jack JAVA 🃏
+
+Juego de Black Jack que consiste en 3 jugadores (Cliente), que juegan contra el Dealer (servidor).
+
+Integrantes:
+- Ingrid-E
+- Jean Pierre
+
