@@ -7,7 +7,7 @@ Juego de Black Jack que consiste en 3 jugadores (Cliente), que juegan contra el 
 - Jean Pierre
 
 🔨 Tareas:
-- [ ] Crear un tercer jugador, agregarlo a Controlador y un espacio graficamente.
+- [x] Crear un tercer jugador, agregarlo a Controlador y un espacio graficamente.
 - [ ] El jugador debe pagar una apuesta inicial, en el inicio donde pone su nombre.
   - Puede ser un valor fijo, o todos deben de apostar lo mismo.
 - [ ] Las cartas se deben de visualizar de forma gráfica
