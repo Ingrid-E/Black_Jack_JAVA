@@ -131,38 +131,29 @@ public class ServidorBJ implements Runnable{
 	
 	private void determinarGanarPerder() {
 		String mensajeInicial = datosEnviar.getMensaje();
-		if (datosEnviar.getJugadorEstado() == "voló" || datosEnviar.getJugadorEstado() == "plantó") {
-			for (int i = 0; i < 3; i++) {
-				if (valorManos[i] <= 21) {
-					if (valorManos[3] > 21) {
-						datosEnviar.setMensaje(mensajeInicial + "Ganaste!");
-						mostrarMensaje("Ganaste if");
-						jugadores[i].enviarMensajeCliente(datosEnviar);
-					}
-					else if (valorManos[i] > 21) {
-						datosEnviar.setMensaje(mensajeInicial + "Perdiste!");
-						mostrarMensaje("Perdiste else if");
-						jugadores[i].enviarMensajeCliente(datosEnviar);
-					}
-					else if (valorManos[i] == valorManos[3]) {
-						datosEnviar.setMensaje(mensajeInicial + "Empataste!");
-						mostrarMensaje("empataste");
-						jugadores[i].enviarMensajeCliente(datosEnviar);
-					}
-					else if (valorManos[i] > valorManos[3]) {
-						datosEnviar.setMensaje(mensajeInicial + "Ganaste!");
-						mostrarMensaje("Ganaste else if");
-						jugadores[i].enviarMensajeCliente(datosEnviar);
-					}
-					else {
-						datosEnviar.setMensaje(mensajeInicial + "Perdiste!");
-						mostrarMensaje("Perdiste else");
-						jugadores[i].enviarMensajeCliente(datosEnviar);
-					}
-				}
-			}
-		} else {
+		for(Jugador jugador : jugadores) {
+			int i = jugador.indexJugador;
+			//Operadores booleanos
+			System.out.println("Jugador: " + i + " cartas: " + valorManos[i]);
+			boolean dealerVolo = datosEnviar.getJugadorEstado() == "voló" && valorManos[i] <= 21;
+			boolean jugadorGanoDealer = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] < valorManos[i];
+			boolean jugadorPerdioDealer = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] > valorManos[i];
+			boolean jugadorVolo = valorManos[i] > 21;
+			boolean empatados = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] == valorManos[i];
 			
+			if(dealerVolo || jugadorGanoDealer) {
+				datosEnviar.setMensaje(mensajeInicial + "Ganaste!");
+				mostrarMensaje("Ganaste if");
+				jugadores[i].enviarMensajeCliente(datosEnviar);
+			}else if(jugadorPerdioDealer || jugadorVolo) {
+				datosEnviar.setMensaje(mensajeInicial + "Perdiste!");
+				mostrarMensaje("Perdiste else");
+				jugadores[i].enviarMensajeCliente(datosEnviar);
+			}else if (empatados) {
+				datosEnviar.setMensaje(mensajeInicial + "Empataste!");
+				mostrarMensaje("empataste");
+				jugadores[i].enviarMensajeCliente(datosEnviar);
+			}
 		}
 	}
 	
@@ -375,7 +366,7 @@ public class ServidorBJ implements Runnable{
     	private String entrada;
     	
     	//variables de control
-    	private int indexJugador;
+    	protected int indexJugador;
     	private boolean suspendido;
   
 		public Jugador(Socket conexionCliente, int indexJugador) {
@@ -617,10 +608,10 @@ public class ServidorBJ implements Runnable{
 			jugadores[1].enviarMensajeCliente(datosEnviar);
 			jugadores[2].enviarMensajeCliente(datosEnviar);*/
 			
-			determinarGanarPerder();
+			
 			
         }//fin while
-
+        determinarGanarPerder();
 	}
     
 }//Fin class ServidorBJ
