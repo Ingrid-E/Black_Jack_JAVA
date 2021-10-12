@@ -89,7 +89,7 @@ public class ServidorBJ implements Runnable{
 		manoJugador3 = new ArrayList<Carta>();
 		manoDealer = new ArrayList<Carta>();
 		
-		//reparto inicial jugadores 1 y 2
+		//reparto inicial jugadores 1, 2 y 3
 		for(int i=1;i<=2;i++) {
 		  carta = mazo.getCarta();
 		  manoJugador1.add(carta);
@@ -126,6 +126,43 @@ public class ServidorBJ implements Runnable{
 				}else {
 					valorManos[i]+=Integer.parseInt(carta.getValor()); 
 				}
+		}
+	}
+	
+	private void determinarGanarPerder() {
+		String mensajeInicial = datosEnviar.getMensaje();
+		if (datosEnviar.getJugadorEstado() == "voló" || datosEnviar.getJugadorEstado() == "plantó") {
+			for (int i = 0; i < 3; i++) {
+				if (valorManos[i] <= 21) {
+					if (valorManos[3] > 21) {
+						datosEnviar.setMensaje(mensajeInicial + "Ganaste!");
+						mostrarMensaje("Ganaste if");
+						jugadores[i].enviarMensajeCliente(datosEnviar);
+					}
+					else if (valorManos[i] > 21) {
+						datosEnviar.setMensaje(mensajeInicial + "Perdiste!");
+						mostrarMensaje("Perdiste else if");
+						jugadores[i].enviarMensajeCliente(datosEnviar);
+					}
+					else if (valorManos[i] == valorManos[3]) {
+						datosEnviar.setMensaje(mensajeInicial + "Empataste!");
+						mostrarMensaje("empataste");
+						jugadores[i].enviarMensajeCliente(datosEnviar);
+					}
+					else if (valorManos[i] > valorManos[3]) {
+						datosEnviar.setMensaje(mensajeInicial + "Ganaste!");
+						mostrarMensaje("Ganaste else if");
+						jugadores[i].enviarMensajeCliente(datosEnviar);
+					}
+					else {
+						datosEnviar.setMensaje(mensajeInicial + "Perdiste!");
+						mostrarMensaje("Perdiste else");
+						jugadores[i].enviarMensajeCliente(datosEnviar);
+					}
+				}
+			}
+		} else {
+			
 		}
 	}
 	
@@ -540,47 +577,50 @@ public class ServidorBJ implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		mostrarMensaje("Incia el dealer ...");
+		mostrarMensaje("Inicia el dealer ...");
         boolean pedir = true;
         
         while(pedir) {
 		  	Carta carta = mazo.getCarta();
 			//adicionar la carta a la mano del dealer
-			manosJugadores.get(2).add(carta);
-			calcularValorMano(carta, 2);
+			manosJugadores.get(3).add(carta);
+			calcularValorMano(carta, 3);
 			
-			mostrarMensaje("El dealer recibe "+carta.toString()+" suma "+ valorManos[2]);
+			mostrarMensaje("El dealer recibe "+carta.toString()+" suma "+ valorManos[3]);
 			
 
     		datosEnviar = new DatosBlackJack();
 			datosEnviar.setCarta(carta);
 			datosEnviar.setJugador("dealer");
 				
-			if(valorManos[2]<=16) {
+			if(valorManos[3]<=16) {
 				datosEnviar.setJugadorEstado("sigue");
-				datosEnviar.setMensaje("Dealer ahora tiene "+valorManos[2]);
+				datosEnviar.setMensaje("Dealer ahora tiene "+valorManos[3]);
 				mostrarMensaje("El dealer sigue jugando");
 			}else {
-				if(valorManos[2]>21) {
+				if(valorManos[3]>21) {
 					datosEnviar.setJugadorEstado("voló");
-					datosEnviar.setMensaje("Dealer ahora tiene "+valorManos[2]+" voló :(");
+					datosEnviar.setMensaje("Dealer ahora tiene "+valorManos[3]+" voló :( \n");
 					pedir=false;
 					mostrarMensaje("El dealer voló");
 				}else {
 					datosEnviar.setJugadorEstado("plantó");
-					datosEnviar.setMensaje("Dealer ahora tiene "+valorManos[2]+" plantó");
+					datosEnviar.setMensaje("Dealer ahora tiene "+valorManos[3]+" plantó \n");
 					pedir=false;
 					mostrarMensaje("El dealer plantó");
 				}
 			}
+			
 			//envia la jugada a los otros jugadores
 			datosEnviar.setCarta(carta);
-			jugadores[0].enviarMensajeCliente(datosEnviar);
+			/*jugadores[0].enviarMensajeCliente(datosEnviar);
 			jugadores[1].enviarMensajeCliente(datosEnviar);
-			jugadores[2].enviarMensajeCliente(datosEnviar);
-				
+			jugadores[2].enviarMensajeCliente(datosEnviar);*/
+			
+			determinarGanarPerder();
+			
         }//fin while
-        
+
 	}
     
 }//Fin class ServidorBJ
