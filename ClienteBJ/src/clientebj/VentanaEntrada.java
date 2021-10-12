@@ -15,12 +15,13 @@ import javax.swing.JTextField;
 public class VentanaEntrada extends JInternalFrame {
 	
 	private static final long serialVersionUID = 1L;
-	private JLabel bienvenida, labelNombre;
+	private JLabel bienvenida, labelNombre, labelApuesta;
 	private JPanel ingreso;
-	private JTextField nombreJugador;
+	private JTextField nombreJugador, apuestaJugador;
 	private JButton ingresar;
 	private VentanaEspera ventanaEspera;
 	private ClienteBlackJack cliente;
+	private boolean apuestaEsCorrecta;
 	
 	private Escucha escucha;
 	
@@ -37,17 +38,24 @@ public class VentanaEntrada extends JInternalFrame {
 
 	private void initInternalFrame() {
 		// TODO Auto-generated method stub
+		apuestaEsCorrecta = false;
 		escucha = new Escucha();
 		this.getContentPane().setLayout(new BorderLayout());
-		bienvenida = new JLabel("Registre su nombre para ingresar");
+		bienvenida = new JLabel("Registre su nombre y su apuesta para ingresar");
 		add(bienvenida, BorderLayout.NORTH);
 
 		ingreso = new JPanel(); 
 		labelNombre= new JLabel("Nombre"); 
-		nombreJugador =	new JTextField(10); 
+		nombreJugador =	new JTextField(10);
+		labelApuesta = new JLabel("Apuesta");
+		apuestaJugador = new JTextField(10);
 		ingresar = new JButton("Ingresar");
 		ingresar.addActionListener(escucha);
-		ingreso.add(labelNombre); ingreso.add(nombreJugador); ingreso.add(ingresar);
+		ingreso.add(labelNombre);
+		ingreso.add(nombreJugador);
+		ingreso.add(labelApuesta);
+		ingreso.add(apuestaJugador);
+		ingreso.add(ingresar);
 		add(ingreso,BorderLayout.CENTER);
 	}
 	
@@ -64,14 +72,31 @@ public class VentanaEntrada extends JInternalFrame {
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
 			//cargar Sala de Espera y cerrar Ventana Entrada
-			if(nombreJugador.getText().length()==0) {
+			if(nombreJugador.getText().length() == 0) {
 				JOptionPane.showMessageDialog(null, "Debes ingresar un nombre para identificarte!!");
-			}else {
-				cliente.setIdYo(nombreJugador.getText());
-				ventanaEspera = new VentanaEspera(nombreJugador.getText());
-				getContainerFrames().add(ventanaEspera);
-				cliente.buscarServidor();
-                cerrarVentanaEntrada();
+			}
+			else if (apuestaJugador.getText().length() == 0) {
+				//Integer.parseInt(apuestaJugador.getText());
+				JOptionPane.showMessageDialog(null, "Debes ingresar un valor de apuesta!!");
+			}
+			else {
+				try {
+					Integer.parseInt(apuestaJugador.getText());
+					apuestaEsCorrecta = true;
+				} catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(null, "La apuesta debe de ser un numero!!");
+				}
+				if (apuestaEsCorrecta) {
+					cliente.setIdYo(nombreJugador.getText());
+					cliente.setApuestaYo(Integer.parseInt(apuestaJugador.getText()));
+					ventanaEspera = new VentanaEspera(nombreJugador.getText());
+					getContainerFrames().add(ventanaEspera);
+					cliente.buscarServidor();
+		            cerrarVentanaEntrada();
+				}
+				else {
+					
+				}
 			}	
 		}
 	}
