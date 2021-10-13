@@ -279,15 +279,15 @@ public class ServidorBJ implements Runnable{
 	    		jugadores[2].enviarMensajeCliente(datosEnviar);
 	    		
 	    		//notificar a todos que jugador sigue
+	    		int siguienteJugador = jugadorEnTurno+1;
 	    		if(jugadorEnTurno==0 || jugadorEnTurno == 1) {
-	        		int jugadorActual = jugadorEnTurno+1;
+	        	
 	        		datosEnviar = new DatosBlackJack();
 		    		datosEnviar.setIdJugadores(idJugadores);
 					datosEnviar.setValorManos(valorManos);
-					datosEnviar.setJugador(idJugadores[jugadorActual]);
+					datosEnviar.setJugador(idJugadores[siguienteJugador]);
 					datosEnviar.setJugadorEstado("iniciar");
-					datosEnviar.setMensaje(idJugadores[jugadorActual]+" te toca jugar y tienes "+valorManos[jugadorActual] + "\n" + "Apostaste " + apuestaJugadores[jugadorActual]);
-					
+					datosEnviar.setMensaje(idJugadores[siguienteJugador]+" te toca jugar y tienes "+valorManos[siguienteJugador]);
 					jugadores[0].enviarMensajeCliente(datosEnviar);
 					jugadores[1].enviarMensajeCliente(datosEnviar);
 					jugadores[2].enviarMensajeCliente(datosEnviar);
