@@ -136,7 +136,7 @@ public class ServidorBJ implements Runnable{
 			//Operadores booleanos
 			System.out.println("Jugador: " + i + " cartas: " + valorManos[i]);
 			boolean dealerVolo = datosEnviar.getJugadorEstado() == "voló" && valorManos[i] <= 21;
-			boolean jugadorGanoDealer = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] < valorManos[i];
+			boolean jugadorGanoDealer = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] < valorManos[i] && valorManos[i] <= 21;
 			boolean jugadorPerdioDealer = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] > valorManos[i];
 			boolean jugadorVolo = valorManos[i] > 21;
 			boolean empatados = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] == valorManos[i];
@@ -241,14 +241,15 @@ public class ServidorBJ implements Runnable{
 	    		jugadores[2].enviarMensajeCliente(datosEnviar);
 	    		
 	    		//notificar a todos que jugador sigue
+	    		int siguienteJugador = jugadorEnTurno+1;
 	    		if(jugadorEnTurno==0 || jugadorEnTurno == 1) {
-	        		int jugadorActual = jugadorEnTurno+1;
+	        	
 	        		datosEnviar = new DatosBlackJack();
 		    		datosEnviar.setIdJugadores(idJugadores);
 					datosEnviar.setValorManos(valorManos);
-					datosEnviar.setJugador(idJugadores[jugadorActual]);
+					datosEnviar.setJugador(idJugadores[siguienteJugador]);
 					datosEnviar.setJugadorEstado("iniciar");
-					datosEnviar.setMensaje(idJugadores[jugadorActual]+" te toca jugar y tienes "+valorManos[jugadorActual]);
+					datosEnviar.setMensaje(idJugadores[siguienteJugador]+" te toca jugar y tienes "+valorManos[siguienteJugador]);
 					
 					jugadores[0].enviarMensajeCliente(datosEnviar);
 					jugadores[1].enviarMensajeCliente(datosEnviar);
