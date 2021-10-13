@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -135,6 +136,11 @@ public class VentanaSalaJuego extends JInternalFrame {
 			dealer.pintarCartasInicio(datosRecibidos.getManoDealer());
 			
 			areaMensajes.append(datosRecibidos.getMensaje()+"\n");
+		}
+		
+		public void pintarVolverJugar() {
+			Object opciones[] = {"Otra", "Terminar"};
+			int opcion = JOptionPane.showOptionDialog(this, "Quieres volver a jugar?", "Reiniciar", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[1]);
 		}
 		
 		public void pintarTurno(DatosBlackJack datosRecibidos) {

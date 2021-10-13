@@ -655,6 +655,7 @@ public class ServidorBJ implements Runnable{
 			
 			
         }//fin while
+        datosEnviar.setReiniciar(true);
         determinarGanarPerder();
 	}
     
