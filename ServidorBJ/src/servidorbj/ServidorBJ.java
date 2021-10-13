@@ -12,6 +12,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.swing.JOptionPane;
+
 import comunes.Baraja;
 import comunes.Carta;
 import comunes.DatosBlackJack;
@@ -40,6 +42,7 @@ public class ServidorBJ implements Runnable{
 	
 	//variables de control del juego
 	private String[] idJugadores;
+	private int[] apuestaJugadores;
 	private int jugadorEnTurno;
 	//private boolean iniciarJuego;
 	private Baraja mazo;
@@ -80,6 +83,7 @@ public class ServidorBJ implements Runnable{
 		
 		idJugadores = new String[3];
 		valorManos = new int[4];
+		apuestaJugadores = new int[3];
 		
 		mazo = new Baraja();
 		Carta carta;
@@ -136,24 +140,58 @@ public class ServidorBJ implements Runnable{
 			//Operadores booleanos
 			System.out.println("Jugador: " + i + " cartas: " + valorManos[i]);
 			boolean dealerVolo = datosEnviar.getJugadorEstado() == "voló" && valorManos[i] <= 21;
-			boolean jugadorGanoDealer = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] < valorManos[i];
+			boolean jugadorGanoDealer = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] < valorManos[i] && valorManos[i] <= 21;
 			boolean jugadorPerdioDealer = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] > valorManos[i];
 			boolean jugadorVolo = valorManos[i] > 21;
 			boolean empatados = datosEnviar.getJugadorEstado() != "voló" && valorManos[3] == valorManos[i];
 			
 			if(dealerVolo || jugadorGanoDealer) {
-				datosEnviar.setMensaje(mensajeInicial + "Ganaste!");
+				datosEnviar.setMensaje(mensajeInicial + calcularGananciasOPerdidas(i, "Ganaste"));
 				mostrarMensaje("Ganaste if");
 				jugadores[i].enviarMensajeCliente(datosEnviar);
 			}else if(jugadorPerdioDealer || jugadorVolo) {
-				datosEnviar.setMensaje(mensajeInicial + "Perdiste!");
+				datosEnviar.setMensaje(mensajeInicial + "Perdiste! \n" + calcularGananciasOPerdidas(i, "Perdiste"));
 				mostrarMensaje("Perdiste else");
 				jugadores[i].enviarMensajeCliente(datosEnviar);
 			}else if (empatados) {
-				datosEnviar.setMensaje(mensajeInicial + "Empataste!");
+				datosEnviar.setMensaje(mensajeInicial + "Empataste! \n" + calcularGananciasOPerdidas(i, "Empataste"));
 				mostrarMensaje("empataste");
 				jugadores[i].enviarMensajeCliente(datosEnviar);
 			}
+		}
+	}
+	
+	public String calcularGananciasOPerdidas(int numeroJugador, String resultado) {
+		switch(resultado) {
+		case "Ganaste":
+			if (numeroJugador == 0) {
+				if (manoJugador1.size() == 2 && valorManos[numeroJugador] == 21) {
+					return "Ganaste con Black Jack!! \nEl dealer paga un total de " + (apuestaJugadores[numeroJugador]/2) * 3;
+				} else {
+					return "Ganaste por sumatoria!! \nEl dealer paga un total de " + apuestaJugadores[numeroJugador];
+				}
+			}
+			if (numeroJugador == 1) {
+				if (manoJugador2.size() == 2 && valorManos[numeroJugador] == 21) {
+					return "Ganaste con Black Jack!! \nEl dealer paga un total de " + (apuestaJugadores[numeroJugador]/2) * 3;
+				} else {
+					return "Ganaste por sumatoria!! \nEl dealer paga un total de " + apuestaJugadores[numeroJugador];
+				}
+			}
+			if (numeroJugador == 2) {
+				if (manoJugador3.size() == 2 && valorManos[numeroJugador] == 21) {
+					return "Ganaste con Black Jack!! \nEl dealer paga un total de " + (apuestaJugadores[numeroJugador]/2) * 3;
+				} else {
+					return "Ganaste por sumatoria!! \nEl dealer paga un total de " + apuestaJugadores[numeroJugador];
+				}
+			}
+			
+		case "Perdiste":
+			return "Perdiste tus " + apuestaJugadores[numeroJugador];
+		case "Empataste":
+			return "Recuperaste tus " + apuestaJugadores[numeroJugador];
+		default :
+			return "error";	
 		}
 	}
 	
@@ -184,7 +222,7 @@ public class ServidorBJ implements Runnable{
     	
     	//despertar al jugador 1 porque es su turno
     	try {
-    		this.mostrarMensaje("Despertando al jugador 1 para que inicie el juego");
+    		this.mostrarMensaje("Despertando al jugador 1 y 2 para que inicie el juego");
         	jugadores[0].setSuspendido(false);
         	jugadores[1].setSuspendido(false);
         	esperarInicio.signal();
@@ -248,7 +286,7 @@ public class ServidorBJ implements Runnable{
 					datosEnviar.setValorManos(valorManos);
 					datosEnviar.setJugador(idJugadores[jugadorActual]);
 					datosEnviar.setJugadorEstado("iniciar");
-					datosEnviar.setMensaje(idJugadores[jugadorActual]+" te toca jugar y tienes "+valorManos[jugadorActual]);
+					datosEnviar.setMensaje(idJugadores[jugadorActual]+" te toca jugar y tienes "+valorManos[jugadorActual] + "\n" + "Apostaste " + apuestaJugadores[jugadorActual]);
 					
 					jugadores[0].enviarMensajeCliente(datosEnviar);
 					jugadores[1].enviarMensajeCliente(datosEnviar);
@@ -312,7 +350,7 @@ public class ServidorBJ implements Runnable{
 				datosEnviar.setValorManos(valorManos);
 				datosEnviar.setJugador(idJugadores[jugadorActual]);
 				datosEnviar.setJugadorEstado("iniciar");
-				datosEnviar.setMensaje(idJugadores[jugadorActual]+" te toca jugar y tienes "+valorManos[jugadorActual]);
+				datosEnviar.setMensaje(idJugadores[jugadorActual]+" te toca jugar y tienes "+valorManos[jugadorActual] + "\n" + "Apostaste " + apuestaJugadores[jugadorActual]);
 				
 				jugadores[0].enviarMensajeCliente(datosEnviar);
 				jugadores[1].enviarMensajeCliente(datosEnviar);
@@ -400,6 +438,7 @@ public class ServidorBJ implements Runnable{
 				try {
 					//guarda el nombre del primer jugador
 					idJugadores[0] = (String)in.readObject();
+					apuestaJugadores[0] = Integer.parseInt(JOptionPane.showInputDialog(null, "Valor de la apuesta: ", "Apuesta Jugador 1", JOptionPane.QUESTION_MESSAGE));
 					mostrarMensaje("Hilo establecido con jugador (1) "+idJugadores[0]);
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -419,6 +458,7 @@ public class ServidorBJ implements Runnable{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}finally {
+						//JOptionPane.showInputDialog(null, "Insert value: ", "The title", JOptionPane.QUESTION_MESSAGE);
 						mostrarMensaje("Desbloquea Servidor luego de bloquear al jugador 1");
 						jugadores[1].setSuspendido(false);
 						esperarInicio.signal();
@@ -438,7 +478,7 @@ public class ServidorBJ implements Runnable{
 				datosEnviar.setManoJugador3(manosJugadores.get(2));	
 				datosEnviar.setIdJugadores(idJugadores);
 				datosEnviar.setValorManos(valorManos);
-				datosEnviar.setMensaje("Inicias "+idJugadores[0]+" tienes "+valorManos[0]);
+				datosEnviar.setMensaje("Inicias "+idJugadores[0]+" tienes "+valorManos[jugadorEnTurno] + "\n" + "Apostaste " + apuestaJugadores[jugadorEnTurno]);
 				enviarMensajeCliente(datosEnviar);
 				jugadorEnTurno=0;
 				
@@ -448,6 +488,7 @@ public class ServidorBJ implements Runnable{
 				try {
 					//guarda el nombre del primer jugador
 					idJugadores[1] = (String)in.readObject();
+					apuestaJugadores[1] = Integer.parseInt(JOptionPane.showInputDialog(null, "Valor de la apuesta: ", "Apuesta Jugador 2", JOptionPane.QUESTION_MESSAGE));
 					mostrarMensaje("Hilo establecido con jugador (2) "+idJugadores[1]);
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -469,6 +510,7 @@ public class ServidorBJ implements Runnable{
 						e.printStackTrace();
 					}finally {
 						mostrarMensaje("Desbloquea Servidor luego de bloquear al jugador 2");
+						//JOptionPane.showInputDialog(null, "Insert value: ", "The title", JOptionPane.QUESTION_MESSAGE);
 						bloqueoJuego.unlock();
 					}
 				}
@@ -484,7 +526,7 @@ public class ServidorBJ implements Runnable{
 				datosEnviar.setIdJugadores(idJugadores);
 				datosEnviar.setValorManos(valorManos);
 				//Revisar valor manos
-				datosEnviar.setMensaje("Empezo "+idJugadores[0]+" tienes "+valorManos[1]);
+				datosEnviar.setMensaje("Empezo "+idJugadores[0]+" tiene "+valorManos[jugadorEnTurno] + "\n" + "Aposto " + apuestaJugadores[jugadorEnTurno]);
 				enviarMensajeCliente(datosEnviar);
 				
 			}
@@ -494,6 +536,7 @@ public class ServidorBJ implements Runnable{
 				   //jugador 2 debe esperar su turno
 				try {
 					idJugadores[2] = (String)in.readObject();
+					apuestaJugadores[2] = Integer.parseInt(JOptionPane.showInputDialog(null, "Valor de la apuesta: ", "Apuesta Jugador 3", JOptionPane.QUESTION_MESSAGE));
 					mostrarMensaje("Hilo establecido con jugador (3) "+idJugadores[2]);
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -519,10 +562,10 @@ public class ServidorBJ implements Runnable{
 				datosEnviar.setIdJugadores(idJugadores);
 				datosEnviar.setValorManos(valorManos);
 				//Revisar valor manos
-				datosEnviar.setMensaje("Empezo "+idJugadores[0]+" tienes "+valorManos[2]);
+				datosEnviar.setMensaje("Empezo "+idJugadores[0]+" tiene "+valorManos[jugadorEnTurno] + "\n" + "Aposto " + apuestaJugadores[jugadorEnTurno]);
 				enviarMensajeCliente(datosEnviar);
 				
-				iniciarRondaJuego(); //despertar al jugador 1 para iniciar el juego
+				iniciarRondaJuego(); //despertar al jugador 1 y 2 para iniciar el juego
 				mostrarMensaje("Bloquea al servidor para poner en espera de turno al jugador 3");
 				bloqueoJuego.lock();
 				try {
@@ -534,6 +577,7 @@ public class ServidorBJ implements Runnable{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}finally {
+					//JOptionPane.showInputDialog(null, "Insert value: ", "The title", JOptionPane.QUESTION_MESSAGE);
 					bloqueoJuego.unlock();
 				}	
 			}

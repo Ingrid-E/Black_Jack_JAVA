@@ -32,7 +32,6 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 	
 	//variables de control del juego
 	private String idYo, otroJugador, otroJugador2;
-	private int apuestaYo;
 	private boolean turno;
 	private DatosBlackJack datosRecibidos;
 	
@@ -95,10 +94,6 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 	
 	public void setIdYo(String id) {
 		idYo=id;
-	}
-	
-	public void setApuestaYo(int apuesta) {
-		apuestaYo = apuesta;
 	}
 	
 	private void mostrarMensajes(String mensaje) {

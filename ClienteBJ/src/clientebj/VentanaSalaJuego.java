@@ -108,7 +108,7 @@ public class VentanaSalaJuego extends JInternalFrame {
 			yoFull.setPreferredSize(new Dimension(206,100));
 			yoFull.add(panelYo);
 			yoFull.add(panelBotones);
-			add(yoFull,BorderLayout.WEST);	
+			add(yoFull,BorderLayout.WEST);
 		}
 		
 		public void activarBotones(boolean turno) {
