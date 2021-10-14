@@ -41,7 +41,7 @@ public class ServidorBJ implements Runnable{
 	private Jugador[] jugadores;
 	
 	//variables de control del juego
-	private String[] idJugadores;
+	private String[] idJugadores, jugadoresSave;
 	private int[] apuestaJugadores;
 	private int jugadorEnTurno;
 	//private boolean iniciarJuego;
@@ -51,7 +51,7 @@ public class ServidorBJ implements Runnable{
 	private ArrayList<Carta> manoDealer;
 	private int[] valorManos;
 	private DatosBlackJack datosEnviar;
-	
+
 	public ServidorBJ() {
 	    //inicializar variables de control del juego
 		inicializarVariablesControlRonda();
@@ -239,6 +239,8 @@ public class ServidorBJ implements Runnable{
     }
     
     private void analizarMensaje(String entrada, int indexJugador) {
+    	
+    	System.out.println("Entrada: " + entrada);
 		// TODO Auto-generated method stub
         //garantizar que solo se analice la petición del jugador en turno.
     	while(indexJugador!=jugadorEnTurno) {
@@ -328,7 +330,65 @@ public class ServidorBJ implements Runnable{
 	    		jugadores[2].enviarMensajeCliente(datosEnviar);
 	    		
     		}
-    	}else {
+    	}else if(entrada.equals("reiniciar")) {
+    		manejadorHilos = Executors.newFixedThreadPool(LONGITUD_COLA);
+    		bloqueoJuego = new ReentrantLock();
+    		esperarInicio = bloqueoJuego.newCondition();
+    		esperarTurno = bloqueoJuego.newCondition();
+    		finalizar = bloqueoJuego.newCondition();
+    		
+    		valorManos = new int[4];
+    		apuestaJugadores = new int[3];
+    		
+    		mazo = new Baraja();
+    		Carta carta;
+    		
+    		manoJugador1 = new ArrayList<Carta>();
+    		manoJugador2 = new ArrayList<Carta>();
+    		manoJugador3 = new ArrayList<Carta>();
+    		manoDealer = new ArrayList<Carta>();
+    		
+    		//reparto inicial jugadores 1, 2 y 3
+    		for(int i=1;i<=2;i++) {
+    		  carta = mazo.getCarta();
+    		  manoJugador1.add(carta);
+    		  calcularValorMano(carta,0);
+    		  carta = mazo.getCarta();
+    		  manoJugador2.add(carta);
+    		  calcularValorMano(carta,1);
+    		  carta = mazo.getCarta();
+    		  manoJugador3.add(carta);
+    		  calcularValorMano(carta,2);
+    		}
+    		//Carta inicial Dealer
+    		carta = mazo.getCarta();
+    		manoDealer.add(carta);
+    		calcularValorMano(carta,3);
+    		
+    		//gestiona las tres manos en un solo objeto para facilitar el manejo del hilo
+    		manosJugadores = new ArrayList<ArrayList<Carta>>(4);
+    		manosJugadores.add(manoJugador1);
+    		manosJugadores.add(manoJugador2);
+    		manosJugadores.add(manoJugador3);
+    		manosJugadores.add(manoDealer);
+    		
+			datosEnviar = new DatosBlackJack();
+			datosEnviar.setManoDealer(manosJugadores.get(3));
+			datosEnviar.setManoJugador1(manosJugadores.get(0));
+			datosEnviar.setManoJugador2(manosJugadores.get(1));		
+			datosEnviar.setManoJugador3(manosJugadores.get(2));	
+			datosEnviar.setJugadorEstado("iniciar");
+
+			datosEnviar.setJugador(idJugadores[indexJugador]);
+			datosEnviar.setValorManos(valorManos);
+			
+			jugadores[0].enviarMensajeCliente(datosEnviar);	
+			jugadores[1].enviarMensajeCliente(datosEnviar);
+			jugadores[2].enviarMensajeCliente(datosEnviar);
+			
+			
+    	}
+    	else {
     		//jugador en turno plantó
     		datosEnviar = new DatosBlackJack();
     		datosEnviar.setIdJugadores(idJugadores);
@@ -400,7 +460,7 @@ public class ServidorBJ implements Runnable{
         @SuppressWarnings("unused")
 		private Socket conexionCliente;
     	private ObjectOutputStream out;
-    	private ObjectInputStream in;
+    	public ObjectInputStream in;
     	private String entrada;
     	
     	//variables de control
@@ -560,6 +620,7 @@ public class ServidorBJ implements Runnable{
 				
 				datosEnviar.setManoJugador3(manosJugadores.get(2));			
 				datosEnviar.setIdJugadores(idJugadores);
+				jugadoresSave = idJugadores;
 				datosEnviar.setValorManos(valorManos);
 				//Revisar valor manos
 				datosEnviar.setMensaje("Empezo "+idJugadores[0]+" tiene "+valorManos[jugadorEnTurno] + "\n" + "Aposto " + apuestaJugadores[jugadorEnTurno]);
@@ -585,6 +646,7 @@ public class ServidorBJ implements Runnable{
 			while(!seTerminoRonda()) {
 				try {
 					entrada = (String) in.readObject();
+					System.out.println("ENTRADA: " + entrada);
 					analizarMensaje(entrada,indexJugador);
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
@@ -594,7 +656,7 @@ public class ServidorBJ implements Runnable{
 					//controlar cuando se cierra un cliente
 				}
 			}
-			//cerrar conexión
+			
 		}
 		
 		public void enviarMensajeCliente(Object mensaje) {
@@ -656,6 +718,7 @@ public class ServidorBJ implements Runnable{
 			
         }//fin while
         datosEnviar.setReiniciar(true);
+
         determinarGanarPerder();
 	}
     

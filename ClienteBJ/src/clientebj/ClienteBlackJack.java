@@ -33,7 +33,7 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 	//variables de control del juego
 	private String idYo, otroJugador, otroJugador2;
 	private boolean turno;
-	private DatosBlackJack datosRecibidos;
+	protected DatosBlackJack datosRecibidos;
 	
 	//variables para manejar la conexión con el Servidor BlackJack
 	private Socket conexion;
@@ -174,11 +174,8 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 					mostrarMensajes("Cliente hilo run recibiendo mensaje servidor ");
 					mostrarMensajes(datosRecibidos.getJugador()+" "+datosRecibidos.getJugadorEstado());
 					System.out.println(datosRecibidos.getReiniciar());
-					if(datosRecibidos.getReiniciar()) {
-						ventanaSalaJuego.pintarVolverJugar();
-					}else {
-						ventanaSalaJuego.pintarTurno(datosRecibidos);
-					}
+					ventanaSalaJuego.pintarTurno(datosRecibidos);
+					
 					
 					
 				} catch (ClassNotFoundException e) {
