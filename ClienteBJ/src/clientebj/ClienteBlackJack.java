@@ -39,6 +39,7 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 	private Socket conexion;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
+	private ClienteBlackJack cliente;
 	
 	//Componentes Graficos
 	private JDesktopPane containerInternalFrames;
@@ -46,13 +47,15 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 	private VentanaEntrada ventanaEntrada;
 	private VentanaEspera ventanaEspera;
 	private VentanaSalaJuego ventanaSalaJuego;
+	public String[] idJugadores= new String[3];
+	int jugador = 0;
 	
 	/**
 	 * Instantiates a new cliente black jack.
 	 */
 	public ClienteBlackJack() {
 		initGUI();
-		
+		cliente = this;
 		//default window settings
 		this.setTitle("Juego BlackJack");
 		this.setSize(WIDTH, HEIGHT);
@@ -147,6 +150,9 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 			try {
 				datosRecibidos = new DatosBlackJack();
 				datosRecibidos = (DatosBlackJack) in.readObject();
+				for(int i=0; i<3; i++) {
+					idJugadores[i] = datosRecibidos.getIdJugadores()[i];
+				}
 				if(datosRecibidos.getIdJugadores()[0].equals(idYo)) {
 					otroJugador=datosRecibidos.getIdJugadores()[1];
 					otroJugador2=datosRecibidos.getIdJugadores()[2];
@@ -159,6 +165,7 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 					otroJugador2 = datosRecibidos.getIdJugadores()[1];
 				}
 				this.habilitarSalaJuego(datosRecibidos);
+				jugador++;
 			} catch (ClassNotFoundException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -172,11 +179,13 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 					datosRecibidos = new DatosBlackJack();
 					datosRecibidos = (DatosBlackJack)in.readObject();
 					mostrarMensajes("Cliente hilo run recibiendo mensaje servidor ");
-					mostrarMensajes(datosRecibidos.getJugador()+" "+datosRecibidos.getJugadorEstado());
-					System.out.println(datosRecibidos.getReiniciar());
-					ventanaSalaJuego.pintarTurno(datosRecibidos);
-					
-					
+					if(!ventanaSalaJuego.reinicio) {
+						mostrarMensajes(datosRecibidos.getJugador()+" "+datosRecibidos.getJugadorEstado());
+						System.out.println(datosRecibidos.getReiniciar());
+						ventanaSalaJuego.pintarTurno(datosRecibidos);
+					}else {
+						System.out.println("Juego se esta reiniciando");
+					}
 					
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
@@ -198,7 +207,7 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 				// TODO Auto-generated method stub
 				ventanaEspera = (VentanaEspera)containerInternalFrames.getComponent(0);
 				ventanaEspera.cerrarSalaEspera();
-				ventanaSalaJuego = new VentanaSalaJuego(idYo,otroJugador, otroJugador2);
+				ventanaSalaJuego = new VentanaSalaJuego(idYo,otroJugador, otroJugador2, cliente);
 				ventanaSalaJuego.pintarCartasInicio(datosRecibidos);
 				adicionarInternalFrame(ventanaSalaJuego);
                 if(turno) {

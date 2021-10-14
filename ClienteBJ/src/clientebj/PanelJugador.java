@@ -30,6 +30,11 @@ public class PanelJugador extends JPanel {
 		this.setBorder(bordes);
 	}
 	
+	private void reiniciar() {
+		dibujoRecordar = new ArrayList<Recuerdo>();
+		
+	}
+	
 	public void pintarCartasInicio(ArrayList<Carta> manoJugador) {
 		x=5;
 	    for(int i=0;i<manoJugador.size();i++) {

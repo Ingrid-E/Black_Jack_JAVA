@@ -13,9 +13,7 @@ public class DatosBlackJack implements Serializable{
 	private String mensaje;
 	private String jugador,jugadorEstado;
 	private Boolean reiniciar = false;
-	
-	
-	
+		
 	public String getJugador() {
 		return jugador;
 	}

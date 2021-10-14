@@ -29,17 +29,18 @@ public class VentanaSalaJuego extends JInternalFrame {
 		private JButton pedir, plantar;
 		private JPanel panelYo, panelBotones, yoFull, panelDealer,panelJugador2, panelJugador3;
 		private boolean mismaPartida = true;
-		private boolean reinicio = false;
-		private ClienteBlackJack cliente = (ClienteBlackJack)this.getTopLevelAncestor();
+		protected boolean reinicio = false;
+		private ClienteBlackJack cliente;
 		
 		private String yoId, jugador2Id, jugador3Id;
 		//private DatosBlackJack datosRecibidos;
 		private Escucha escucha;
 		
-		public VentanaSalaJuego(String yoId, String jugador2Id, String jugador3Id) {
+		public VentanaSalaJuego(String yoId, String jugador2Id, String jugador3Id, ClienteBlackJack cliente) {
 			this.yoId = yoId;
 			this.jugador2Id = jugador2Id;
 			this.jugador3Id = jugador3Id;
+			this.cliente =cliente;
 			//this.datosRecibidos=datosRecibidos;
 						
 			initGUI();
@@ -143,6 +144,33 @@ public class VentanaSalaJuego extends JInternalFrame {
 			areaMensajes.append(datosRecibidos.getMensaje()+"\n");
 		}
 		
+		public void pintarCartasReinicio(DatosBlackJack datosRecibidos) {
+			this.getContentPane().removeAll();
+			initGUI();
+			this.revalidate();
+			this.repaint();
+			
+			if(cliente.idJugadores[0].equals(yoId)) {
+				yo.pintarCartasInicio(datosRecibidos.getManoJugador1());
+				jugador2.pintarCartasInicio(datosRecibidos.getManoJugador2());
+				jugador3.pintarCartasInicio(datosRecibidos.getManoJugador3());
+				
+			}else if(cliente.idJugadores[1].equals(yoId)) {
+				yo.pintarCartasInicio(datosRecibidos.getManoJugador2());
+				jugador2.pintarCartasInicio(datosRecibidos.getManoJugador1());
+				jugador3.pintarCartasInicio(datosRecibidos.getManoJugador3());
+			}
+			else {
+				yo.pintarCartasInicio(datosRecibidos.getManoJugador3());
+				jugador2.pintarCartasInicio(datosRecibidos.getManoJugador1());
+				jugador3.pintarCartasInicio(datosRecibidos.getManoJugador2());
+			}
+			dealer.pintarCartasInicio(datosRecibidos.getManoDealer());
+			
+			areaMensajes.append(datosRecibidos.getMensaje()+"\n");
+		}
+		
+		
 		public void pintarTurno(DatosBlackJack datosRecibidos) {
 			areaMensajes.append(datosRecibidos.getMensaje()+"\n");	
 			if(!reinicio) {
@@ -197,57 +225,8 @@ public class VentanaSalaJuego extends JInternalFrame {
 			}
 			
 		}		
-		
-		
-		public void reiniciarPartida(DatosBlackJack datosRecibidos) {
-			areaMensajes.append(datosRecibidos.getMensaje()+"\n");	
-			ClienteBlackJack cliente = (ClienteBlackJack)this.getTopLevelAncestor();
-			
-			if(datosRecibidos.getJugador().contentEquals(yoId)){
-				if(datosRecibidos.getJugadorEstado().equals("iniciar")) {
-					activarBotones(true);
-				}else {
-					if(datosRecibidos.getJugadorEstado().equals("plantó") ){
-						cliente.setTurno(false);
-					}else {
-						yo.pintarLaCarta(datosRecibidos.getCarta());
-						if(datosRecibidos.getJugadorEstado().equals("voló")) {
-							SwingUtilities.invokeLater(new Runnable() {
-								@Override
-								public void run() {
-									// TODO Auto-generated method stub
-									activarBotones(false);
-									cliente.setTurno(false);
-								}});			
-						      }
-						}
-					} 
-			 }else {//movidas de los otros jugadores
-					if(datosRecibidos.getJugador().equals(jugador2Id)) {
-						//mensaje para PanelJuego jugador2
-						if(datosRecibidos.getJugadorEstado().equals("sigue")|| datosRecibidos.getJugadorEstado().equals("voló")) {
-							jugador2.pintarLaCarta(datosRecibidos.getCarta());
-						}
-					}else if(datosRecibidos.getJugador().equals(jugador3Id)) {
-							//mensaje para PanelJuego jugador2
-							if(datosRecibidos.getJugadorEstado().equals("sigue")|| datosRecibidos.getJugadorEstado().equals("voló")) {
-								jugador3.pintarLaCarta(datosRecibidos.getCarta());
-							}
-					}else {
-						//mensaje para PanelJuego dealer
-						if(datosRecibidos.getJugadorEstado().equals("voló")	||
-						   datosRecibidos.getJugadorEstado().equals("plantó")) {
-							areaMensajes.append("DEALER PLANTO"+"\n");	
-							dealer.pintarLaCarta(datosRecibidos.getCarta());
-						}else if(datosRecibidos.getJugadorEstado().equals("sigue")){
-							dealer.pintarLaCarta(datosRecibidos.getCarta());
-						}
-					}
-				}		
-			
-		}		
-		
-		
+
+	
 		
 	   private void nuevaPartida(DatosBlackJack datosRecibidos) {
 		   Timer timer = new Timer();
@@ -262,8 +241,7 @@ public class VentanaSalaJuego extends JInternalFrame {
 				
 				if(tiempo == 3) {
 					enviarDatos("reiniciar");	
-					System.out.println("Reiniciar " + datosRecibidos.getIdJugadores());
-					cliente.iniciarHilo();
+					pintarCartasReinicio(datosRecibidos);
 					mismaPartida = false;
 					timer.cancel();
 				}

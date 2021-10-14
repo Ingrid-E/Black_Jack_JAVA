@@ -82,6 +82,7 @@ public class VentanaEntrada extends JInternalFrame {
 					JOptionPane.showMessageDialog(null, "La apuesta debe de ser un numero!!");
 				}*/
 			else {
+				System.out.println("Valor que se guarda como idYo " + nombreJugador.getText());
 				cliente.setIdYo(nombreJugador.getText());
 				ventanaEspera = new VentanaEspera(nombreJugador.getText());
 				getContainerFrames().add(ventanaEspera);
