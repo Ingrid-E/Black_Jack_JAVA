@@ -332,67 +332,7 @@ public class ServidorBJ implements Runnable{
 	    		jugadores[2].enviarMensajeCliente(datosEnviar);
 	    		
     		}
-    	}else if(entrada.equals("reiniciar")) {
-    		System.out.println("Reiniciar " + indexJugador);
-    		jugadorEnTurno = 0;
-    		manejadorHilos = Executors.newFixedThreadPool(LONGITUD_COLA);
-    		bloqueoJuego = new ReentrantLock();
-    		esperarInicio = bloqueoJuego.newCondition();
-    		esperarTurno = bloqueoJuego.newCondition();
-    		finalizar = bloqueoJuego.newCondition();
-    		
-    		valorManos = new int[4];
-    		apuestaJugadores = new int[3];
-    		
-    		mazo = new Baraja();
-    		Carta carta;
-    		
-    		manoJugador1 = new ArrayList<Carta>();
-    		manoJugador2 = new ArrayList<Carta>();
-    		manoJugador3 = new ArrayList<Carta>();
-    		manoDealer = new ArrayList<Carta>();
-    		
-    		//reparto inicial jugadores 1, 2 y 3
-    		for(int i=1;i<=2;i++) {
-    		  carta = mazo.getCarta();
-    		  manoJugador1.add(carta);
-    		  calcularValorMano(carta,0);
-    		  carta = mazo.getCarta();
-    		  manoJugador2.add(carta);
-    		  calcularValorMano(carta,1);
-    		  carta = mazo.getCarta();
-    		  manoJugador3.add(carta);
-    		  calcularValorMano(carta,2);
-    		}
-    		//Carta inicial Dealer
-    		carta = mazo.getCarta();
-    		manoDealer.add(carta);
-    		calcularValorMano(carta,3);
-    		
-    		//gestiona las tres manos en un solo objeto para facilitar el manejo del hilo
-    		manosJugadores = new ArrayList<ArrayList<Carta>>(4);
-    		manosJugadores.add(manoJugador1);
-    		manosJugadores.add(manoJugador2);
-    		manosJugadores.add(manoJugador3);
-    		manosJugadores.add(manoDealer);
-    		
-			datosEnviar = new DatosBlackJack();
-			datosEnviar.setManoDealer(manosJugadores.get(3));
-			datosEnviar.setManoJugador1(manosJugadores.get(0));
-			datosEnviar.setManoJugador2(manosJugadores.get(1));		
-			datosEnviar.setManoJugador3(manosJugadores.get(2));	
-			datosEnviar.setJugadorEstado("iniciar");
-			datosEnviar.setIdJugadores(idJugadores);
-			datosEnviar.setJugador(idJugadores[indexJugador]);
-			datosEnviar.setValorManos(valorManos);
-			
-			jugadores[0].enviarMensajeCliente(datosEnviar);	
-			jugadores[1].enviarMensajeCliente(datosEnviar);
-			jugadores[2].enviarMensajeCliente(datosEnviar);
-			
-			
-    	}
-    	else {
+    	}else {
     		//jugador en turno plantó
     		datosEnviar = new DatosBlackJack();
     		datosEnviar.setIdJugadores(idJugadores);
@@ -495,11 +435,13 @@ public class ServidorBJ implements Runnable{
   		manosJugadores.add(manoDealer);
 			
 		
-			datosEnviar.setManoDealer(manosJugadores.get(3));
+		
 			datosEnviar.setManoJugador1(manosJugadores.get(0));
 			datosEnviar.setManoJugador2(manosJugadores.get(1));		
 			datosEnviar.setManoJugador3(manosJugadores.get(2));	
+			datosEnviar.setManoDealer(manosJugadores.get(3));
 			datosEnviar.setValorManos(valorManos);
+			
 			
 			jugadores[0].enviarMensajeCliente(datosEnviar);
 			jugadores[1].enviarMensajeCliente(datosEnviar);

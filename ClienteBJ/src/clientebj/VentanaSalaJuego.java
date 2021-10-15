@@ -166,7 +166,11 @@ public class VentanaSalaJuego extends JInternalFrame {
 				jugador3.pintarCartasInicio(datosRecibidos.getManoJugador2());
 			}
 			dealer.pintarCartasInicio(datosRecibidos.getManoDealer());
-			
+			reinicio = false;
+			datosRecibidos.setJugador(cliente.idJugadores[0]);
+			datosRecibidos.setJugadorEstado("iniciar");
+			pintarTurno(datosRecibidos);
+
 			areaMensajes.append(datosRecibidos.getMensaje()+"\n");
 		}
 		
@@ -240,8 +244,14 @@ public class VentanaSalaJuego extends JInternalFrame {
 				areaMensajes.append(mensaje+"\n");	
 				
 				if(tiempo == 3) {
-					enviarDatos("reiniciar");	
+					//enviarDatos("reiniciar");
+					datosRecibidos.setJugadorEstado("iniciar");
 					pintarCartasReinicio(datosRecibidos);
+					System.out.println("mano dealer " + datosRecibidos.getManoDealer());
+					System.out.println("mano jugador 1 " + datosRecibidos.getManoJugador1());
+					System.out.println("mano jugador 2 " + datosRecibidos.getManoJugador2());
+					System.out.println("mano jugador 3 " + datosRecibidos.getManoJugador3());
+
 					mismaPartida = false;
 					timer.cancel();
 				}
