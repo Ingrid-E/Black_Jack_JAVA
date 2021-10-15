@@ -32,6 +32,7 @@ public class ServidorBJ implements Runnable{
 	// variables para funcionar como servidor
 	private ServerSocket server;
 	private Socket conexionJugador;
+	private Thread dealer;
 	
 	//variables para manejo de hilos
 	private ExecutorService manejadorHilos;
@@ -237,7 +238,12 @@ public class ServidorBJ implements Runnable{
 	}
 	
     private boolean seTerminoRonda() {
-       return false;	
+    	if(datosEnviar.getReiniciar()) {
+    		return true;
+    	}else {
+    		return false;
+    	}
+    		
     }
     
     private void analizarMensaje(String entrada, int indexJugador) {
@@ -397,8 +403,11 @@ public class ServidorBJ implements Runnable{
   		esperarTurno = bloqueoJuego.newCondition();
   		finalizar = bloqueoJuego.newCondition();
   		
-  		valorManos = new int[4];
-  		apuestaJugadores = new int[3];
+  		valorManos[0] = 0;
+  		valorManos[1] = 0;
+  		valorManos[2] = 0;
+  		valorManos[3] = 0;
+  		//apuestaJugadores = new int[3];
   		
   		mazo = new Baraja();
   		Carta carta;
@@ -410,7 +419,7 @@ public class ServidorBJ implements Runnable{
   		
   		//reparto inicial jugadores 1, 2 y 3
   		for(int i=0;i<2;i++) {
-  			System.out.println("Repartiendo " + (i+1) + "cartas");
+  		System.out.println("Repartiendo " + (i+1) + "cartas");
   		  carta = mazo.getCarta();
   		  manoJugador1.add(carta);
   		  calcularValorMano(carta,0);
@@ -443,15 +452,16 @@ public class ServidorBJ implements Runnable{
 			datosEnviar.setValorManos(valorManos);
 			
 			
+			System.out.println("Valor mano dealer " + valorManos[3]);
+			
 			jugadores[0].enviarMensajeCliente(datosEnviar);
 			jugadores[1].enviarMensajeCliente(datosEnviar);
 			jugadores[2].enviarMensajeCliente(datosEnviar);
 		
    }
-    
     public void iniciarDealer() {
        //le toca turno al dealer.
-    	Thread dealer = new Thread(this);
+    	dealer = new Thread(this);
     	dealer.start();
     }
     
@@ -697,6 +707,9 @@ public class ServidorBJ implements Runnable{
 				datosEnviar.setJugadorEstado("sigue");
 				datosEnviar.setMensaje("Dealer ahora tiene "+valorManos[3]);
 				mostrarMensaje("El dealer sigue jugando");
+				jugadores[0].enviarMensajeCliente(datosEnviar);
+				jugadores[1].enviarMensajeCliente(datosEnviar);
+				jugadores[2].enviarMensajeCliente(datosEnviar);
 			}else {
 				if(valorManos[3]>21) {
 					datosEnviar.setJugadorEstado("voló");

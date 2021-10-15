@@ -167,11 +167,11 @@ public class VentanaSalaJuego extends JInternalFrame {
 			}
 			dealer.pintarCartasInicio(datosRecibidos.getManoDealer());
 			reinicio = false;
+			mismaPartida = true;
 			datosRecibidos.setJugador(cliente.idJugadores[0]);
 			datosRecibidos.setJugadorEstado("iniciar");
+			datosRecibidos.setMensaje("Nueva Partida!");
 			pintarTurno(datosRecibidos);
-
-			areaMensajes.append(datosRecibidos.getMensaje()+"\n");
 		}
 		
 		
@@ -215,11 +215,9 @@ public class VentanaSalaJuego extends JInternalFrame {
 							if(datosRecibidos.getJugadorEstado().equals("voló")	||
 							   datosRecibidos.getJugadorEstado().equals("plantó")) {
 								areaMensajes.append("DEALER PLANTO"+"\n");	
-								if(mismaPartida) {
-									reinicio = true;
-									nuevaPartida(datosRecibidos);
-								}
-								
+								reinicio = true;
+								nuevaPartida(datosRecibidos);
+
 								dealer.pintarLaCarta(datosRecibidos.getCarta());
 							}else if(datosRecibidos.getJugadorEstado().equals("sigue")){
 								dealer.pintarLaCarta(datosRecibidos.getCarta());
@@ -243,16 +241,14 @@ public class VentanaSalaJuego extends JInternalFrame {
 				mensaje = "Nueva partida comenzando en: " + tiempo;
 				areaMensajes.append(mensaje+"\n");	
 				
-				if(tiempo == 3) {
+				if(tiempo == 5) {
 					//enviarDatos("reiniciar");
-					datosRecibidos.setJugadorEstado("iniciar");
 					pintarCartasReinicio(datosRecibidos);
 					System.out.println("mano dealer " + datosRecibidos.getManoDealer());
 					System.out.println("mano jugador 1 " + datosRecibidos.getManoJugador1());
 					System.out.println("mano jugador 2 " + datosRecibidos.getManoJugador2());
 					System.out.println("mano jugador 3 " + datosRecibidos.getManoJugador3());
 
-					mismaPartida = false;
 					timer.cancel();
 				}
 				tiempo++;
