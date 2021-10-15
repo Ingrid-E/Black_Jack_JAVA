@@ -11,13 +11,16 @@ import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.ColorUIResource;
 
 import comunes.DatosBlackJack;
 
@@ -31,6 +34,7 @@ public class VentanaSalaJuego extends JInternalFrame {
 		private boolean mismaPartida = true;
 		protected boolean reinicio = false;
 		private ClienteBlackJack cliente;
+		private VentanaSalaJuego ventana;
 		
 		private String yoId, jugador2Id, jugador3Id;
 		//private DatosBlackJack datosRecibidos;
@@ -42,14 +46,13 @@ public class VentanaSalaJuego extends JInternalFrame {
 			this.jugador3Id = jugador3Id;
 			this.cliente =cliente;
 			//this.datosRecibidos=datosRecibidos;
-						
+			this.ventana = this;
 			initGUI();
 			
 			//default window settings
 			this.setTitle("Sala de juego BlackJack - Jugador: "+yoId);
-			this.pack();
-			this.setLocation((ClienteBlackJack.WIDTH-this.getWidth())/2, 
-			         (ClienteBlackJack.HEIGHT-this.getHeight())/2);
+			this.setSize(cliente.WIDTH-15, cliente.HEIGHT-40);
+			this.setLocation(0, 0);
 			this.setResizable(false);
 			this.show();
 		}
@@ -77,6 +80,7 @@ public class VentanaSalaJuego extends JInternalFrame {
 			panelJugador3 = new JPanel();
 			jugador3= new PanelJugador(jugador3Id);	
 			panelJugador3.add(jugador3);
+			
 			add(panelJugador3,BorderLayout.SOUTH);	
 			
 			
@@ -91,9 +95,10 @@ public class VentanaSalaJuego extends JInternalFrame {
 			areaMensajes.setOpaque(false);
 			areaMensajes.setBackground(new Color(0, 0, 0, 0));
 			areaMensajes.setEditable(false);
-
+			
 			scroll.getViewport().setOpaque(false);
 			scroll.setOpaque(false);
+			//scroll.setVisible(false);
 			add(scroll,BorderLayout.CENTER);
 			
 			panelYo = new JPanel();
@@ -234,16 +239,16 @@ public class VentanaSalaJuego extends JInternalFrame {
 		   Timer timer = new Timer();
 		   timer.scheduleAtFixedRate(new TimerTask() {
 			int tiempo = 1;
-			String mensaje = "Nueva partida comenzando en: ";
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				mensaje = "Nueva partida comenzando en: " + tiempo;
-				areaMensajes.append(mensaje+"\n");	
+				ventana.setTitle("Jugador " + yoId + " Nueva Partida comenzando en: " + tiempo);
 				
 				if(tiempo == 5) {
 					//enviarDatos("reiniciar");
+					ventana.setTitle("Sala de juego BlackJack - Jugador: "+yoId);
 					pintarCartasReinicio(datosRecibidos);
+
 					System.out.println("mano dealer " + datosRecibidos.getManoDealer());
 					System.out.println("mano jugador 1 " + datosRecibidos.getManoJugador1());
 					System.out.println("mano jugador 2 " + datosRecibidos.getManoJugador2());
