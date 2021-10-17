@@ -1,5 +1,9 @@
 package servidorbj;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,6 +16,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import comunes.Baraja;
@@ -465,7 +470,16 @@ public class ServidorBJ implements Runnable{
     	dealer.start();
     }
     
-    /*The Class Jugador. Clase interna que maneja el servidor para gestionar la comunicación
+    public int validarApuesta(String mensaje, String cualJugador) {
+    	try {
+    		int bet = Integer.parseInt(JOptionPane.showInputDialog(null, mensaje, "Apuesta " + cualJugador, JOptionPane.QUESTION_MESSAGE));
+    		return bet;
+    	} catch (NumberFormatException e) {
+    		return validarApuesta("El valor debe ser un numero!!", cualJugador);
+    	}
+    }
+
+	/*The Class Jugador. Clase interna que maneja el servidor para gestionar la comunicación
      * con cada cliente Jugador que se conecte
      */
     private class Jugador implements Runnable{
@@ -512,7 +526,7 @@ public class ServidorBJ implements Runnable{
 				try {
 					//guarda el nombre del primer jugador
 					idJugadores[0] = (String)in.readObject();
-					apuestaJugadores[0] = Integer.parseInt(JOptionPane.showInputDialog(null, "Valor de la apuesta: ", "Apuesta Jugador 1", JOptionPane.QUESTION_MESSAGE));
+					apuestaJugadores[0] = validarApuesta("Valor de la apuesta: ", "Jugador 1");
 					mostrarMensaje("Hilo establecido con jugador (1) "+idJugadores[0]);
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -562,7 +576,7 @@ public class ServidorBJ implements Runnable{
 				try {
 					//guarda el nombre del primer jugador
 					idJugadores[1] = (String)in.readObject();
-					apuestaJugadores[1] = Integer.parseInt(JOptionPane.showInputDialog(null, "Valor de la apuesta: ", "Apuesta Jugador 2", JOptionPane.QUESTION_MESSAGE));
+					apuestaJugadores[1] = validarApuesta("Valor de la apuesta: ", "Jugador 2");
 					mostrarMensaje("Hilo establecido con jugador (2) "+idJugadores[1]);
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -610,7 +624,7 @@ public class ServidorBJ implements Runnable{
 				   //jugador 2 debe esperar su turno
 				try {
 					idJugadores[2] = (String)in.readObject();
-					apuestaJugadores[2] = Integer.parseInt(JOptionPane.showInputDialog(null, "Valor de la apuesta: ", "Apuesta Jugador 3", JOptionPane.QUESTION_MESSAGE));
+					apuestaJugadores[2] = validarApuesta("Valor de la apuesta: ", "Jugador 3");
 					mostrarMensaje("Hilo establecido con jugador (3) "+idJugadores[2]);
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
