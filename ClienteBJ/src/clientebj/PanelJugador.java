@@ -1,11 +1,7 @@
 package clientebj;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridBagLayout;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +28,14 @@ public class PanelJugador extends JPanel {
 	private String nombreJugador;
 	private int x;
 	private int cantidadCartas = 0;
-	    
+	/**
+	 * Constructor principal de la clase
+	 * PanelJugador. 
+	 * 
+	 * Inicia y agrega los elementos principales
+	 * al Panel.
+	 * @param nombreJugador
+	 */
 	public PanelJugador(String nombreJugador) {
 		//this.setBackground(Color.GREEN);
 		this.setLayout(null);
@@ -51,7 +54,10 @@ public class PanelJugador extends JPanel {
 		this.setBorder(bordes);
 		this.add(cartasJugador);
 	}
-	
+	/**
+	 * Pinta las cartas al inicio de la partida.
+	 * @param manoJugador
+	 */
 	public void pintarCartasInicio(ArrayList<Carta> manoJugador) {
 		cartasJugador.removeAll();
 		System.out.print(this.nombreJugador + " cartas en mano: ");
@@ -69,7 +75,11 @@ public class PanelJugador extends JPanel {
 	    cartasJugador.repaint();
 
 	}
-	
+	/**
+	 * Agrega una carta al panel del jugador
+	 * visualmente
+	 * @param carta
+	 */
 	public void pintarLaCarta (Carta carta) {
 		
 		Component[] cartasAntiguas = this.cartasJugador.getComponents();
@@ -90,7 +100,14 @@ public class PanelJugador extends JPanel {
 	}
 	
 	
-	
+	/**
+	 * Divide la imagen que contiene todas las cartas 
+	 * en subImagenes para facilitar su uso.
+	 * 
+	 * Cada fila es un simbolo: C,P,D,T
+	 * Cada columna es un valor , 2,3,4,5,Q,T
+	 * @return
+	 */
 	private ImageIcon[][] dividirImagen() {
 		ImageIcon[][] cartas = new ImageIcon[4][12];
 		InputStream input = PanelJugador.class.getResourceAsStream("/img/Cartas.png");
@@ -109,7 +126,14 @@ public class PanelJugador extends JPanel {
 		return cartas;
 		
 	}
-	
+	/**
+	 * Obtiene la carta por medio de la posicion
+	 * en el array segun el simbolo y valor
+	 * especificado.
+	 * @param simbolo
+	 * @param valor
+	 * @return
+	 */
 	public ImageIcon getCarta(String simbolo, String valor) {
 		int fila = 0;
 		int posicion = 0;

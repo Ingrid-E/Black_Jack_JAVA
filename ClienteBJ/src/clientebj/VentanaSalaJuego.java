@@ -1,5 +1,4 @@
 package clientebj;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,52 +10,56 @@ import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.ColorUIResource;
 
 import comunes.DatosBlackJack;
 
 public class VentanaSalaJuego extends JInternalFrame {
-
+	//Atributos
 	private static final long serialVersionUID = 1L;
 		private PanelJugador dealer, yo, jugador2, jugador3;
 		private JTextArea areaMensajes;
 		private JButton pedir, plantar;
 		private JPanel panelYo, panelBotones, yoFull, panelDealer,panelJugador2, panelJugador3;
-		private boolean mismaPartida = true;
 		protected boolean reinicio = false;
 		private ClienteBlackJack cliente;
 		private VentanaSalaJuego ventana;
-		
 		private String yoId, jugador2Id, jugador3Id;
-		//private DatosBlackJack datosRecibidos;
 		private Escucha escucha;
 		
+		/**
+		 * Constructor principal que inicia los valores y organiza a los jugadores.
+		 * @param yoId
+		 * @param jugador2Id
+		 * @param jugador3Id
+		 * @param cliente
+		 */
 		public VentanaSalaJuego(String yoId, String jugador2Id, String jugador3Id, ClienteBlackJack cliente) {
+			//Inicializando los jugadores
 			this.yoId = yoId;
 			this.jugador2Id = jugador2Id;
 			this.jugador3Id = jugador3Id;
 			this.cliente =cliente;
-			//this.datosRecibidos=datosRecibidos;
 			this.ventana = this;
+			//Iniciar GUI
 			initGUI();
 			
 			//default window settings
 			this.setTitle("Sala de juego BlackJack - Jugador: "+yoId);
-			this.setSize(cliente.WIDTH-15, cliente.HEIGHT-40);
+			this.setSize(ClienteBlackJack.WIDTH-15, ClienteBlackJack.HEIGHT-40);
 			this.setLocation(0, 0);
 			this.setResizable(false);
 			this.show();
 		}
-
+		/**
+		 * Inicia la parte grafica de la ventana sala juego,
+		 * se inicializan los paneles y la escucha.
+		 */
 		private void initGUI() {
 			// TODO Auto-generated method stub
 			//set up JFrame Container y Layout
@@ -83,7 +86,7 @@ public class VentanaSalaJuego extends JInternalFrame {
 			
 			add(panelJugador3,BorderLayout.SOUTH);	
 			
-			
+			//Area donde aparecen los mensajes
 			areaMensajes = new JTextArea(8,18);
 			JScrollPane scroll = new JScrollPane(areaMensajes);	
 			Border blackline;
@@ -122,12 +125,19 @@ public class VentanaSalaJuego extends JInternalFrame {
 			yoFull.add(panelBotones);
 			add(yoFull,BorderLayout.WEST);
 		}
-		
+		/**
+		 * Activa los botones para cuando es el turno del,
+		 * jugador principal.
+		 * @param turno
+		 */
 		public void activarBotones(boolean turno) {
 			pedir.setEnabled(turno);
 			plantar.setEnabled(turno);
 		}
-		
+		/**
+		 * Pinta las cartas al iniciar la primera partida
+		 * @param datosRecibidos
+		 */
 		public void pintarCartasInicio(DatosBlackJack datosRecibidos) {
 			if(datosRecibidos.getIdJugadores()[0].equals(yoId)) {
 				yo.pintarCartasInicio(datosRecibidos.getManoJugador1());
@@ -148,7 +158,10 @@ public class VentanaSalaJuego extends JInternalFrame {
 			
 			areaMensajes.append(datosRecibidos.getMensaje()+"\n");
 		}
-		
+		/**
+		 * Pinta las cartas al iniciar una nueva partida 
+		 * @param datosRecibidos
+		 */
 		public void pintarCartasReinicio(DatosBlackJack datosRecibidos) {
 			this.getContentPane().removeAll();
 			initGUI();
@@ -172,14 +185,18 @@ public class VentanaSalaJuego extends JInternalFrame {
 			}
 			dealer.pintarCartasInicio(datosRecibidos.getManoDealer());
 			reinicio = false;
-			mismaPartida = true;
 			datosRecibidos.setJugador(cliente.idJugadores[0]);
 			datosRecibidos.setJugadorEstado("iniciar");
 			datosRecibidos.setMensaje("Nueva Partida!");
 			pintarTurno(datosRecibidos);
 		}
 		
-		
+		/**
+		 * Revisa de quien es el turno,
+		 * si es el jugador principal entonces se le activa los botones,
+		 * si no solo se pinta las cartas obtenidas por los otros jugadores.
+		 * @param datosRecibidos
+		 */
 		public void pintarTurno(DatosBlackJack datosRecibidos) {
 			areaMensajes.append(datosRecibidos.getMensaje()+"\n");	
 			if(!reinicio) {
@@ -234,7 +251,10 @@ public class VentanaSalaJuego extends JInternalFrame {
 		}		
 
 	
-		
+		/**
+		 * Incia una nueva partida despues de x segundos
+		 * @param datosRecibidos
+		 */
 	   private void nuevaPartida(DatosBlackJack datosRecibidos) {
 		   Timer timer = new Timer();
 		   timer.scheduleAtFixedRate(new TimerTask() {
@@ -248,12 +268,6 @@ public class VentanaSalaJuego extends JInternalFrame {
 					//enviarDatos("reiniciar");
 					ventana.setTitle("Sala de juego BlackJack - Jugador: "+yoId);
 					pintarCartasReinicio(datosRecibidos);
-
-					System.out.println("mano dealer " + datosRecibidos.getManoDealer());
-					System.out.println("mano jugador 1 " + datosRecibidos.getManoJugador1());
-					System.out.println("mano jugador 2 " + datosRecibidos.getManoJugador2());
-					System.out.println("mano jugador 3 " + datosRecibidos.getManoJugador3());
-
 					timer.cancel();
 				}
 				tiempo--;
@@ -261,14 +275,22 @@ public class VentanaSalaJuego extends JInternalFrame {
 			   
 		   }, 500, 1000);
 	   }
-	   
+	   /**
+	    * Envia mensajes a la clase ServidorBJ por medio de la clase,
+	    * ClienteBlackJack, para que sepa que boton se pulso.
+	    * @param mensaje
+	    */
 	   private void enviarDatos(String mensaje) {
 			// TODO Auto-generated method stub
 		  ClienteBlackJack cliente = (ClienteBlackJack)this.getTopLevelAncestor();
 		  cliente.enviarMensajeServidor(mensaje);
 		}
 		   
-	  
+	  /**
+	   * Maneja las escuchas de los botones y 
+	   * envia un mensaje por medio de enviarDatos.
+	   * @see enviarDatos(String mensaje)	   *
+	   */
 	   private class Escucha implements ActionListener{
 
 		@Override

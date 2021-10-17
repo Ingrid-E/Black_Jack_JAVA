@@ -21,6 +21,7 @@ import comunes.DatosBlackJack;
  * 
  */
 public class ClienteBlackJack extends JFrame implements Runnable{
+	//Atributos
 	private static final long serialVersionUID = 1L;
 	//Constantes de Interfaz Grafica
 	public static final int WIDTH=670;
@@ -51,7 +52,8 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 	int jugador = 0;
 	
 	/**
-	 * Instantiates a new cliente black jack.
+	 * Constructor principal de la clase
+	 * ClienteBlackJack
 	 */
 	public ClienteBlackJack() {
 		initGUI();
@@ -66,7 +68,7 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 	}
 	
 	/**
-	 * Inits the GUI.
+	 * Inicia la gui del juego
 	 */
 	private void initGUI() {
 		//set up JFrame Container y Layout
@@ -83,26 +85,39 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 		this.setContentPane(containerInternalFrames);
 		adicionarInternalFrame(new VentanaEntrada(this));
 	}
-	
+	/**
+	 * Agrega una ventana interna a la clase,
+	 * para que quede adentro del JFrame
+	 * @param nuevoInternalFrame
+	 */
 	public void adicionarInternalFrame(JInternalFrame nuevoInternalFrame) {
 		add(nuevoInternalFrame);
 	}
-	
+	/**
+	 * Inicia el hilo de los jugadores
+	 */
 	public void iniciarHilo() {
 		ExecutorService hiloCliente = Executors.newFixedThreadPool(1);
 		hiloCliente.execute(this);
-		//Thread hilo = new Thread(this);
-		//hilo.start();
 	}
-	
+	/**
+	 * Guarda el nombre del jugador principal que controla la ventana
+	 * @param id
+	 */
 	public void setIdYo(String id) {
 		idYo=id;
 	}
-	
+	/**
+	 * Muestra los mensajes en la consola
+	 * @param mensaje
+	 */
 	private void mostrarMensajes(String mensaje) {
 		System.out.println(mensaje);
 	}
-	
+	/**
+	 * Envia mensajes a el servidor para correr ciertos comandos.
+	 * @param mensaje
+	 */
 	public void enviarMensajeServidor(String mensaje) {
 		try {
 			out.writeObject(mensaje);
@@ -112,7 +127,10 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 			e.printStackTrace();
 		}
 	}
- 
+	/**
+	 * Busca el servidor cuando el jugador ingresa su nombre
+	 * en la ventanaEspera.
+	 */
 	public void buscarServidor() {
 		mostrarMensajes("Jugador buscando al servidor...");
 		
@@ -140,7 +158,12 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 		//procesar comunicación con el ServidorBlackJack
 		iniciarHilo();	
 	}
-	
+	/**
+	 * Inicia el hilo que se encarga de mandar los mensajes recibidos
+	 * por el servidor a la clase ventanaSalaJuego para saber que pide.
+	 * 
+	 * Organiza el orden de los jugadores segun la ventana correspondiente.
+	 */
 	@Override
 	public void run() {
 		//datosRecibidos = new DatosBlackJack();
@@ -198,7 +221,11 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 			}
 		
 	}
-
+	/**
+	 * Inicia la clase ventanaSalaJuego y cierra la ventana
+	 * Espera, para inicializar la clase con sus jugadores correspondientes.
+	 * @param datosRecibidos
+	 */
 	private void habilitarSalaJuego(DatosBlackJack datosRecibidos) {
 		// TODO Auto-generated method stub
 		SwingUtilities.invokeLater(new Runnable() {
@@ -217,7 +244,9 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 			
 		});
 	}
-
+	/**
+	 * Cierra la conexion del cliente con el servidor
+	 */
 	@SuppressWarnings("unused")
 	private void cerrarConexion() {
 		// TODO Auto-generated method stub
@@ -231,7 +260,10 @@ public class ClienteBlackJack extends JFrame implements Runnable{
 			e.printStackTrace();
 		}	
 	}
-  
+	/**
+	 * Pone el turno que toca
+	 * @param turno
+	 */
 	public void setTurno(boolean turno) {
 		this.turno=turno;
 	}	
