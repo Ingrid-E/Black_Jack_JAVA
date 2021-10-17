@@ -238,13 +238,13 @@ public class VentanaSalaJuego extends JInternalFrame {
 	   private void nuevaPartida(DatosBlackJack datosRecibidos) {
 		   Timer timer = new Timer();
 		   timer.scheduleAtFixedRate(new TimerTask() {
-			int tiempo = 1;
+			int tiempo = 10;
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				ventana.setTitle("Jugador " + yoId + " Nueva Partida comenzando en: " + tiempo);
 				
-				if(tiempo == 5) {
+				if(tiempo == 0) {
 					//enviarDatos("reiniciar");
 					ventana.setTitle("Sala de juego BlackJack - Jugador: "+yoId);
 					pintarCartasReinicio(datosRecibidos);
@@ -256,7 +256,7 @@ public class VentanaSalaJuego extends JInternalFrame {
 
 					timer.cancel();
 				}
-				tiempo++;
+				tiempo--;
 			}
 			   
 		   }, 500, 1000);

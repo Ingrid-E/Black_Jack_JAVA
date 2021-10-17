@@ -57,6 +57,7 @@ public class ServidorBJ implements Runnable{
 	private ArrayList<Carta> manoDealer;
 	private int[] valorManos;
 	private DatosBlackJack datosEnviar;
+	private String[] mensajesFinales;
 
 	public ServidorBJ() {
 	    //inicializar variables de control del juego
@@ -145,6 +146,7 @@ public class ServidorBJ implements Runnable{
 	}
 	
 	private void determinarGanarPerder() {
+		mensajesFinales = new String[3];
 		String mensajeInicial = datosEnviar.getMensaje();
 		for(Jugador jugador : jugadores) {
 			int i = jugador.indexJugador;
@@ -166,6 +168,7 @@ public class ServidorBJ implements Runnable{
 				datosEnviar.setMensaje(mensajeInicial + "Empataste! \n" + calcularGananciasOPerdidas(i, "Empataste"));
 				mostrarMensaje("empataste");
 			}
+			mensajesFinales[i] = datosEnviar.getMensaje();
 		}
 		newGame();
 	}
@@ -459,9 +462,11 @@ public class ServidorBJ implements Runnable{
 			
 			
 			System.out.println("Valor mano dealer " + valorManos[3]);
-			
+			datosEnviar.setMensaje(this.mensajesFinales[0]);
 			jugadores[0].enviarMensajeCliente(datosEnviar);
+			datosEnviar.setMensaje(this.mensajesFinales[1]);
 			jugadores[1].enviarMensajeCliente(datosEnviar);
+			datosEnviar.setMensaje(this.mensajesFinales[2]);
 			jugadores[2].enviarMensajeCliente(datosEnviar);
 		
    }
@@ -737,19 +742,20 @@ public class ServidorBJ implements Runnable{
 					pedir=false;
 					mostrarMensaje("El dealer plantó");
 				}
+		        datosEnviar.setReiniciar(true);
+		        determinarGanarPerder();
 			}
 			
 			//envia la jugada a los otros jugadores
 			datosEnviar.setCarta(carta);
-			/*jugadores[0].enviarMensajeCliente(datosEnviar);
+			jugadores[0].enviarMensajeCliente(datosEnviar);
 			jugadores[1].enviarMensajeCliente(datosEnviar);
-			jugadores[2].enviarMensajeCliente(datosEnviar);*/
+			jugadores[2].enviarMensajeCliente(datosEnviar);
 			
 			
 			
         }//fin while
-        datosEnviar.setReiniciar(true);
-        determinarGanarPerder();
+
 	}
     
 }//Fin class ServidorBJ
