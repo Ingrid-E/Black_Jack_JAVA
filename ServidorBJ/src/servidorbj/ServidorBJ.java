@@ -128,7 +128,12 @@ public class ServidorBJ implements Runnable{
 		// TODO Auto-generated method stub
     	
 			if(carta.getValor().equals("As")) {
-				valorManos[i]+=11;
+				if (valorManos[i] <= 10) {
+					valorManos[i]+=11;
+				}
+				else {
+					valorManos[i] += 1;
+				}
 			}else {
 				if(carta.getValor().equals("J") || carta.getValor().equals("Q")
 						   || carta.getValor().equals("K")) {
@@ -153,20 +158,16 @@ public class ServidorBJ implements Runnable{
 			
 			if(dealerVolo || jugadorGanoDealer) {
 				datosEnviar.setMensaje(mensajeInicial + calcularGananciasOPerdidas(i, "Ganaste"));
-				mostrarMensaje("Ganaste if");
+				mostrarMensaje("Ganaste");
 			}else if(jugadorPerdioDealer || jugadorVolo) {
 				datosEnviar.setMensaje(mensajeInicial + "Perdiste! \n" + calcularGananciasOPerdidas(i, "Perdiste"));
-				mostrarMensaje("Perdiste else");		
+				mostrarMensaje("Perdiste");		
 			}else if (empatados) {
 				datosEnviar.setMensaje(mensajeInicial + "Empataste! \n" + calcularGananciasOPerdidas(i, "Empataste"));
 				mostrarMensaje("empataste");
 			}
-		
 		}
 		newGame();
-		
-		
-		
 	}
 	
 	public String calcularGananciasOPerdidas(int numeroJugador, String resultado) {
