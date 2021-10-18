@@ -8,19 +8,19 @@ Juego de Black Jack que consiste en 3 jugadores (Cliente), que juegan contra el 
 
 🔨 Tareas:
 - [x] Crear un tercer jugador, agregarlo a Controlador y un espacio graficamente.
-- [ ] El jugador debe pagar una apuesta inicial, en el inicio donde pone su nombre.
+- [x] El jugador debe pagar una apuesta inicial, en el inicio donde pone su nombre.
   - Puede ser un valor fijo, o todos deben de apostar lo mismo.
-- [ ] Las cartas se deben de visualizar de forma gráfica
-- [ ] Las apuestas se deben de visualizar de forma gráfica
-- [ ] Terminar Ronda de Juego
+- [x] Las cartas se deben de visualizar de forma gráfica
+- [x] Las apuestas se deben de visualizar de forma gráfica
+- [x] Terminar Ronda de Juego
   - Dealer page o recoga las ganancias segun el resultado
-- [ ] Si un jugador saca **Black Jack** entonces el Dealer le paga:
+- [x] Si un jugador saca **Black Jack** entonces el Dealer le paga:
   - Razon de 3 a 2
   - 3 pesos por cada 2 apostados
   - Ej. Si aposto 10 entonces 10/2 * 3 = 15
-- [ ] Si gana con 21 puntos sumados entonces gana en razon 1 a 1
-- [ ] Iniciar nueva ronda de juego
-- [ ] Hacer los mensajes en tercera persona en la interfaz del jugador que no es su turno
+- [x] Si gana con 21 puntos sumados entonces gana en razon 1 a 1
+- [x] Iniciar nueva ronda de juego
+- [x] Hacer los mensajes en tercera persona en la interfaz del jugador que no es su turno
 
 🎮 Caracteristicas del Juego:
 - Tiene 2 jugadores.
