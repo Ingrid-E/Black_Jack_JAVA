@@ -1,3 +1,12 @@
+/*
+ * Programacion Interactiva
+ * Author: Jean Pierre Cardenas Perea - 1942703
+ * Mail: jean.cardenas@correounivalle.edu.co
+ * Author: Ingrid Echeverri Montoya - 1943542
+ * Mail: ingrid.echeverri@correounivalle.edu.co
+ * Miniproyecto 5 - Black Jack
+ * Date: 10/17/2021
+ */
 package clientebj;
 import java.awt.BorderLayout;
 import java.awt.Color;

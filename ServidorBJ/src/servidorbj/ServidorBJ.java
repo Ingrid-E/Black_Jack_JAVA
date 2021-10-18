@@ -1,3 +1,12 @@
+/*
+ * Programacion Interactiva
+ * Author: Jean Pierre Cardenas Perea - 1942703
+ * Mail: jean.cardenas@correounivalle.edu.co
+ * Author: Ingrid Echeverri Montoya - 1943542
+ * Mail: ingrid.echeverri@correounivalle.edu.co
+ * Miniproyecto 5 - Black Jack
+ * Date: 10/17/2021
+ */
 package servidorbj;
 
 import java.awt.event.WindowAdapter;
@@ -748,9 +757,6 @@ public class ServidorBJ implements Runnable{
 			
 			//envia la jugada a los otros jugadores
 			datosEnviar.setCarta(carta);
-			jugadores[0].enviarMensajeCliente(datosEnviar);
-			jugadores[1].enviarMensajeCliente(datosEnviar);
-			jugadores[2].enviarMensajeCliente(datosEnviar);
 			
 			
 			
